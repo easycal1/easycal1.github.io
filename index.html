@@ -11,7 +11,7 @@
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     min-height: 100vh;
     padding: 20px;
     margin: 0;
@@ -132,6 +132,82 @@
     color: #764ba2;
     font-size: 16px;
   }
+
+  /* Exercise section */
+  #exerciseBox {
+    margin-top: 25px;
+    display: none;
+  }
+  .exercise-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+  .exercise-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .ex-card {
+    background: #f5f7fa;
+    border-radius: 14px;
+    padding: 16px 8px;
+    text-align: center;
+    transition: transform 0.2s;
+  }
+  .ex-card:hover { transform: translateY(-4px); }
+  .ex-icon {
+    font-size: 34px;
+    display: inline-block;
+  }
+  .ex-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: #34495e;
+    margin-top: 6px;
+  }
+
+  /* Animations for each icon */
+  @keyframes jump {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-10px) scale(1.1); }
+  }
+  .anim-jump { animation: jump 0.8s ease-in-out infinite; }
+
+  @keyframes squat {
+    0%, 100% { transform: scaleY(1); }
+    50% { transform: scaleY(0.8) translateY(4px); }
+  }
+  .anim-squat { animation: squat 1s ease-in-out infinite; }
+
+  @keyframes run {
+    0% { transform: translateX(0) rotate(0deg); }
+    25% { transform: translateX(4px) rotate(-8deg); }
+    50% { transform: translateX(0) rotate(0deg); }
+    75% { transform: translateX(-4px) rotate(8deg); }
+    100% { transform: translateX(0) rotate(0deg); }
+  }
+  .anim-run { animation: run 0.6s ease-in-out infinite; }
+
+  @keyframes stretch {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(15deg); }
+  }
+  .anim-stretch { animation: stretch 1.4s ease-in-out infinite; }
+
+  @keyframes lift {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px) scale(1.05); }
+  }
+  .anim-lift { animation: lift 1s ease-in-out infinite; }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  .anim-spin { animation: spin 2s linear infinite; }
 </style>
 </head>
 <body>
@@ -156,6 +232,11 @@
     </div>
     <div class="ideal-weight" id="idealWeight"></div>
   </div>
+
+  <div id="exerciseBox">
+    <div class="exercise-title" id="exerciseTitle"></div>
+    <div class="exercise-grid" id="exerciseGrid"></div>
+  </div>
 </div>
 
 <script>
@@ -163,6 +244,7 @@ function calculateBMI() {
   const heightCm = parseFloat(document.getElementById("height").value);
   const weight = parseFloat(document.getElementById("weight").value);
   const resultBox = document.getElementById("resultBox");
+  const exerciseBox = document.getElementById("exerciseBox");
 
   if (!heightCm || !weight || heightCm <= 0 || weight <= 0) {
     alert("Please enter valid height and weight.");
@@ -183,18 +265,70 @@ function calculateBMI() {
   document.getElementById("bmiCategory").innerText = category;
   document.getElementById("bmiCategory").style.color = color;
 
-  // Position pointer on bar (BMI range 10 to 40 mapped to 0-100%)
   let percent = ((bmi - 10) / (40 - 10)) * 100;
   percent = Math.max(0, Math.min(100, percent));
   document.getElementById("barPointer").style.left = percent + "%";
 
-  // Ideal weight range for normal BMI (18.5 - 24.9)
   const minWeight = (18.5 * heightM * heightM).toFixed(1);
   const maxWeight = (24.9 * heightM * heightM).toFixed(1);
   document.getElementById("idealWeight").innerHTML =
     "Ideal weight range for your height: <strong>" + minWeight + " - " + maxWeight + " kg</strong>";
 
   resultBox.style.display = "block";
+  showExercises(category);
+  exerciseBox.style.display = "block";
+}
+
+function showExercises(category) {
+  const title = document.getElementById("exerciseTitle");
+  const grid = document.getElementById("exerciseGrid");
+  let heading = "";
+  let exercises = [];
+
+  if (category === "Underweight") {
+    heading = "Muscle-building exercises for you";
+    exercises = [
+      { icon: "🏋️", name: "Weight Lifting", anim: "anim-lift" },
+      { icon: "🍳", name: "Protein-rich Meals", anim: "anim-stretch" },
+      { icon: "🧎", name: "Push-ups", anim: "anim-squat" },
+      { icon: "🧘", name: "Yoga & Stretching", anim: "anim-stretch" }
+    ];
+  } else if (category === "Normal weight") {
+    heading = "Great! Keep maintaining with these";
+    exercises = [
+      { icon: "🏃", name: "Light Jogging", anim: "anim-run" },
+      { icon: "🚴", name: "Cycling", anim: "anim-spin" },
+      { icon: "🧘", name: "Yoga", anim: "anim-stretch" },
+      { icon: "🤸", name: "Jumping Jacks", anim: "anim-jump" }
+    ];
+  } else if (category === "Overweight") {
+    heading = "Cardio & strength to help you trim down";
+    exercises = [
+      { icon: "🏃", name: "Brisk Walking/Jog", anim: "anim-run" },
+      { icon: "🤸", name: "Jumping Jacks", anim: "anim-jump" },
+      { icon: "🧎", name: "Squats", anim: "anim-squat" },
+      { icon: "🚴", name: "Cycling", anim: "anim-spin" }
+    ];
+  } else {
+    heading = "Start gentle, build consistency";
+    exercises = [
+      { icon: "🚶", name: "Daily Walking", anim: "anim-run" },
+      { icon: "🏊", name: "Swimming", anim: "anim-stretch" },
+      { icon: "🧘", name: "Gentle Yoga", anim: "anim-stretch" },
+      { icon: "🧎", name: "Bodyweight Squats", anim: "anim-squat" }
+    ];
+  }
+
+  title.innerText = heading;
+  grid.innerHTML = "";
+  exercises.forEach(ex => {
+    grid.innerHTML += `
+      <div class="ex-card">
+        <span class="ex-icon ${ex.anim}">${ex.icon}</span>
+        <div class="ex-name">${ex.name}</div>
+      </div>
+    `;
+  });
 }
 </script>
 
