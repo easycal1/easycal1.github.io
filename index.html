@@ -5,62 +5,132 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Free BMI Calculator - Check Your Body Mass Index Instantly</title>
 <style>
+  * { box-sizing: border-box; }
   body {
-    font-family: Arial, sans-serif;
-    background: #f2f6fc;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     display: flex;
     justify-content: center;
+    align-items: center;
+    min-height: 100vh;
     padding: 20px;
     margin: 0;
   }
   .card {
     background: white;
-    max-width: 400px;
+    max-width: 420px;
     width: 100%;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    padding: 30px 25px;
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    animation: floatIn 0.6s ease;
+  }
+  @keyframes floatIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
   }
   h1 {
-    font-size: 22px;
+    font-size: 24px;
     text-align: center;
     color: #2c3e50;
+    margin-bottom: 5px;
+  }
+  .subtitle {
+    text-align: center;
+    color: #888;
+    font-size: 13px;
+    margin-bottom: 20px;
   }
   label {
     display: block;
     margin-top: 15px;
-    font-weight: bold;
+    font-weight: 600;
     color: #34495e;
+    font-size: 14px;
   }
   input {
     width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    box-sizing: border-box;
+    padding: 12px;
+    margin-top: 6px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
     font-size: 16px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  input:focus {
+    outline: none;
+    border-color: #764ba2;
+    box-shadow: 0 0 0 3px rgba(118,75,162,0.15);
   }
   button {
     width: 100%;
-    margin-top: 20px;
-    padding: 12px;
-    background: #3498db;
+    margin-top: 22px;
+    padding: 14px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
     color: white;
     border: none;
-    border-radius: 6px;
+    border-radius: 10px;
     font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
   }
   button:hover {
-    background: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(118,75,162,0.35);
   }
-  #result {
-    margin-top: 20px;
+  button:active { transform: translateY(0); }
+
+  #resultBox {
+    margin-top: 25px;
+    display: none;
+    animation: fadeUp 0.5s ease;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .bmi-number {
     text-align: center;
-    font-size: 18px;
-    font-weight: bold;
+    font-size: 42px;
+    font-weight: 700;
     color: #2c3e50;
+    margin-bottom: 2px;
+  }
+  .bmi-category {
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 15px;
+  }
+  .bar-track {
+    height: 12px;
+    border-radius: 6px;
+    background: linear-gradient(90deg, #3498db 0%, #2ecc71 35%, #f1c40f 65%, #e74c3c 100%);
+    position: relative;
+    margin-top: 10px;
+  }
+  .bar-pointer {
+    position: absolute;
+    top: -6px;
+    width: 4px;
+    height: 24px;
+    background: #2c3e50;
+    border-radius: 2px;
+    transition: left 0.6s ease;
+  }
+  .ideal-weight {
+    margin-top: 18px;
+    background: #f5f7fa;
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+    font-size: 14px;
+    color: #34495e;
+  }
+  .ideal-weight strong {
+    color: #764ba2;
+    font-size: 16px;
   }
 </style>
 </head>
@@ -68,6 +138,7 @@
 
 <div class="card">
   <h1>BMI Calculator</h1>
+  <p class="subtitle">Check your Body Mass Index instantly</p>
 
   <label for="height">Height (cm)</label>
   <input type="number" id="height" placeholder="e.g. 170">
@@ -77,29 +148,53 @@
 
   <button onclick="calculateBMI()">Calculate BMI</button>
 
-  <div id="result"></div>
+  <div id="resultBox">
+    <div class="bmi-number" id="bmiNumber"></div>
+    <div class="bmi-category" id="bmiCategory"></div>
+    <div class="bar-track">
+      <div class="bar-pointer" id="barPointer"></div>
+    </div>
+    <div class="ideal-weight" id="idealWeight"></div>
+  </div>
 </div>
 
 <script>
 function calculateBMI() {
-  const height = parseFloat(document.getElementById("height").value) / 100;
+  const heightCm = parseFloat(document.getElementById("height").value);
   const weight = parseFloat(document.getElementById("weight").value);
-  const resultDiv = document.getElementById("result");
+  const resultBox = document.getElementById("resultBox");
 
-  if (!height || !weight || height <= 0 || weight <= 0) {
-    resultDiv.innerHTML = "Please enter valid height and weight.";
+  if (!heightCm || !weight || heightCm <= 0 || weight <= 0) {
+    alert("Please enter valid height and weight.");
     return;
   }
 
-  const bmi = weight / (height * height);
+  const heightM = heightCm / 100;
+  const bmi = weight / (heightM * heightM);
   let category = "";
+  let color = "";
 
-  if (bmi < 18.5) category = "Underweight";
-  else if (bmi < 25) category = "Normal weight";
-  else if (bmi < 30) category = "Overweight";
-  else category = "Obese";
+  if (bmi < 18.5) { category = "Underweight"; color = "#3498db"; }
+  else if (bmi < 25) { category = "Normal weight"; color = "#2ecc71"; }
+  else if (bmi < 30) { category = "Overweight"; color = "#f1c40f"; }
+  else { category = "Obese"; color = "#e74c3c"; }
 
-  resultDiv.innerHTML = "Your BMI is " + bmi.toFixed(1) + " (" + category + ")";
+  document.getElementById("bmiNumber").innerText = bmi.toFixed(1);
+  document.getElementById("bmiCategory").innerText = category;
+  document.getElementById("bmiCategory").style.color = color;
+
+  // Position pointer on bar (BMI range 10 to 40 mapped to 0-100%)
+  let percent = ((bmi - 10) / (40 - 10)) * 100;
+  percent = Math.max(0, Math.min(100, percent));
+  document.getElementById("barPointer").style.left = percent + "%";
+
+  // Ideal weight range for normal BMI (18.5 - 24.9)
+  const minWeight = (18.5 * heightM * heightM).toFixed(1);
+  const maxWeight = (24.9 * heightM * heightM).toFixed(1);
+  document.getElementById("idealWeight").innerHTML =
+    "Ideal weight range for your height: <strong>" + minWeight + " - " + maxWeight + " kg</strong>";
+
+  resultBox.style.display = "block";
 }
 </script>
 
