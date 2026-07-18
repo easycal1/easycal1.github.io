@@ -10,8 +10,8 @@
     font-family: 'Segoe UI', Arial, sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     display: flex;
-    justify-content: center;
-    align-items: flex-start;
+    flex-direction: column;
+    align-items: center;
     min-height: 100vh;
     padding: 20px;
     margin: 0;
@@ -169,7 +169,6 @@
     margin-top: 6px;
   }
 
-  /* Animations for each icon */
   @keyframes jump {
     0%, 100% { transform: translateY(0) scale(1); }
     50% { transform: translateY(-10px) scale(1.1); }
@@ -208,6 +207,52 @@
     to { transform: rotate(360deg); }
   }
   .anim-spin { animation: spin 2s linear infinite; }
+
+  /* Blog section */
+  .blog-section {
+    max-width: 420px;
+    width: 100%;
+    margin-top: 25px;
+  }
+  .blog-heading {
+    text-align: center;
+    color: white;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 18px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+  .blog-card {
+    background: white;
+    border-radius: 16px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    opacity: 0;
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .blog-card.from-left { transform: translateX(-60px); }
+  .blog-card.from-right { transform: translateX(60px); }
+  .blog-card.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  .blog-icon {
+    font-size: 26px;
+    margin-bottom: 8px;
+    display: block;
+  }
+  .blog-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 6px;
+  }
+  .blog-text {
+    font-size: 13px;
+    color: #666;
+    line-height: 1.5;
+  }
 </style>
 </head>
 <body>
@@ -236,6 +281,40 @@
   <div id="exerciseBox">
     <div class="exercise-title" id="exerciseTitle"></div>
     <div class="exercise-grid" id="exerciseGrid"></div>
+  </div>
+</div>
+
+<div class="blog-section">
+  <div class="blog-heading">Health & Wellness Tips</div>
+
+  <div class="blog-card from-left">
+    <span class="blog-icon">💧</span>
+    <div class="blog-title">Stay Hydrated Daily</div>
+    <div class="blog-text">Drinking enough water boosts metabolism and helps control hunger, supporting a healthy weight naturally.</div>
+  </div>
+
+  <div class="blog-card from-right">
+    <span class="blog-icon">😴</span>
+    <div class="blog-title">Prioritize Quality Sleep</div>
+    <div class="blog-text">7-9 hours of sleep regulates hunger hormones and is just as important as diet and exercise for weight management.</div>
+  </div>
+
+  <div class="blog-card from-left">
+    <span class="blog-icon">🥗</span>
+    <div class="blog-title">Balanced Nutrition Matters</div>
+    <div class="blog-text">Focus on whole foods, lean protein, and fiber-rich vegetables instead of restrictive crash diets.</div>
+  </div>
+
+  <div class="blog-card from-right">
+    <span class="blog-icon">🚶</span>
+    <div class="blog-title">Move Throughout the Day</div>
+    <div class="blog-text">Small habits like taking stairs or short walks add up and improve metabolism over time.</div>
+  </div>
+
+  <div class="blog-card from-left">
+    <span class="blog-icon">🧠</span>
+    <div class="blog-title">Manage Stress Levels</div>
+    <div class="blog-text">Chronic stress raises cortisol, which can contribute to weight gain — mindfulness and breathing exercises help.</div>
   </div>
 </div>
 
@@ -330,6 +409,18 @@ function showExercises(category) {
     `;
   });
 }
+
+// Scroll-triggered slide-in animation for blog cards
+const blogCards = document.querySelectorAll('.blog-card');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.2 });
+
+blogCards.forEach(card => observer.observe(card));
 </script>
 
 </body>
