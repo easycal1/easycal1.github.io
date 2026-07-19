@@ -6,24 +6,89 @@
 <title>Free BMI Calculator - Check Your Body Mass Index Instantly</title>
 <style>
   * { box-sizing: border-box; }
-  body {
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
     font-family: 'Segoe UI', Arial, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    overflow-x: hidden;
+  }
+  body {
+    background: linear-gradient(-45deg, #667eea, #764ba2, #6a3093, #4568dc);
+    background-size: 400% 400%;
+    animation: gradientMove 14s ease infinite;
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-height: 100vh;
     padding: 20px;
-    margin: 0;
+    position: relative;
   }
+  @keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(50px);
+    opacity: 0.35;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .blob1 {
+    width: 260px; height: 260px;
+    background: #ff6fd8;
+    top: -60px; left: -60px;
+    animation: floatBlob1 12s ease-in-out infinite;
+  }
+  .blob2 {
+    width: 220px; height: 220px;
+    background: #3be8ff;
+    bottom: -40px; right: -40px;
+    animation: floatBlob2 15s ease-in-out infinite;
+  }
+  .blob3 {
+    width: 180px; height: 180px;
+    background: #ffd76f;
+    top: 40%; right: -60px;
+    animation: floatBlob3 10s ease-in-out infinite;
+  }
+  @keyframes floatBlob1 {
+    0%, 100% { transform: translate(0,0) scale(1); }
+    50% { transform: translate(40px, 60px) scale(1.15); }
+  }
+  @keyframes floatBlob2 {
+    0%, 100% { transform: translate(0,0) scale(1); }
+    50% { transform: translate(-30px, -40px) scale(1.1); }
+  }
+  @keyframes floatBlob3 {
+    0%, 100% { transform: translate(0,0) scale(1); }
+    50% { transform: translate(-25px, 30px) scale(1.2); }
+  }
+
+  .content-wrap {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
   .card {
-    background: white;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     max-width: 420px;
     width: 100%;
     padding: 30px 25px;
-    border-radius: 20px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    border-radius: 22px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.35);
     animation: floatIn 0.6s ease;
+    border: 1px solid rgba(255,255,255,0.4);
   }
   @keyframes floatIn {
     from { opacity: 0; transform: translateY(30px); }
@@ -37,7 +102,7 @@
   }
   .subtitle {
     text-align: center;
-    color: #888;
+    color: #666;
     font-size: 13px;
     margin-bottom: 20px;
   }
@@ -55,6 +120,7 @@
     border: 2px solid #e0e0e0;
     border-radius: 10px;
     font-size: 16px;
+    background: white;
     transition: border-color 0.3s, box-shadow 0.3s;
   }
   input:focus {
@@ -62,7 +128,7 @@
     border-color: #764ba2;
     box-shadow: 0 0 0 3px rgba(118,75,162,0.15);
   }
-  button {
+  button.calc-btn {
     width: 100%;
     margin-top: 22px;
     padding: 14px;
@@ -75,11 +141,11 @@
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
   }
-  button:hover {
+  button.calc-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(118,75,162,0.35);
+    box-shadow: 0 8px 20px rgba(118,75,162,0.4);
   }
-  button:active { transform: translateY(0); }
+  button.calc-btn:active { transform: translateY(0); }
 
   #resultBox {
     margin-top: 25px;
@@ -88,403 +154,4 @@
   }
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(15px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .bmi-number {
-    text-align: center;
-    font-size: 42px;
-    font-weight: 700;
-    color: #2c3e50;
-    margin-bottom: 2px;
-  }
-  .bmi-category {
-    text-align: center;
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 15px;
-  }
-  .bar-track {
-    height: 12px;
-    border-radius: 6px;
-    background: linear-gradient(90deg, #3498db 0%, #2ecc71 35%, #f1c40f 65%, #e74c3c 100%);
-    position: relative;
-    margin-top: 10px;
-  }
-  .bar-pointer {
-    position: absolute;
-    top: -6px;
-    width: 4px;
-    height: 24px;
-    background: #2c3e50;
-    border-radius: 2px;
-    transition: left 0.6s ease;
-  }
-  .ideal-weight {
-    margin-top: 18px;
-    background: #f5f7fa;
-    border-radius: 10px;
-    padding: 14px;
-    text-align: center;
-    font-size: 14px;
-    color: #34495e;
-  }
-  .ideal-weight strong {
-    color: #764ba2;
-    font-size: 16px;
-  }
-
-  .exercise-section {
-    max-width: 420px;
-    width: 100%;
-    margin-top: 25px;
-    display: none;
-  }
-  .exercise-heading {
-    text-align: center;
-    color: white;
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 4px;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  }
-  .exercise-subheading {
-    text-align: center;
-    color: rgba(255,255,255,0.85);
-    font-size: 13px;
-    margin-bottom: 18px;
-  }
-  .menu-card {
-    background: white;
-    border-radius: 16px;
-    padding: 16px 18px;
-    margin-bottom: 14px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-  }
-  .menu-card.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  .menu-icon-wrap {
-    width: 54px;
-    height: 54px;
-    min-width: 54px;
-    border-radius: 14px;
-    background: #f5f7fa;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 28px;
-  }
-  .menu-info { flex: 1; }
-  .menu-name {
-    font-size: 15px;
-    font-weight: 700;
-    color: #2c3e50;
-    margin-bottom: 3px;
-  }
-  .menu-desc {
-    font-size: 12px;
-    color: #777;
-    line-height: 1.4;
-  }
-  .menu-tag {
-    display: inline-block;
-    margin-top: 5px;
-    font-size: 11px;
-    font-weight: 600;
-    color: #764ba2;
-    background: #f0eaf7;
-    padding: 2px 8px;
-    border-radius: 20px;
-  }
-
-  @keyframes jump {
-    0%, 100% { transform: translateY(0) scale(1); }
-    50% { transform: translateY(-8px) scale(1.1); }
-  }
-  .anim-jump { animation: jump 0.8s ease-in-out infinite; }
-
-  @keyframes squat {
-    0%, 100% { transform: scaleY(1); }
-    50% { transform: scaleY(0.8) translateY(4px); }
-  }
-  .anim-squat { animation: squat 1s ease-in-out infinite; }
-
-  @keyframes run {
-    0% { transform: translateX(0) rotate(0deg); }
-    25% { transform: translateX(3px) rotate(-8deg); }
-    50% { transform: translateX(0) rotate(0deg); }
-    75% { transform: translateX(-3px) rotate(8deg); }
-    100% { transform: translateX(0) rotate(0deg); }
-  }
-  .anim-run { animation: run 0.6s ease-in-out infinite; }
-
-  @keyframes stretch {
-    0%, 100% { transform: rotate(0deg); }
-    50% { transform: rotate(12deg); }
-  }
-  .anim-stretch { animation: stretch 1.4s ease-in-out infinite; }
-
-  @keyframes lift {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-5px) scale(1.05); }
-  }
-  .anim-lift { animation: lift 1s ease-in-out infinite; }
-
-  @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-  .anim-spin { animation: spin 2s linear infinite; }
-
-  .blog-section {
-    max-width: 420px;
-    width: 100%;
-    margin-top: 25px;
-    display: none;
-  }
-  .blog-heading {
-    text-align: center;
-    color: white;
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 18px;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  }
-  .blog-card {
-    background: white;
-    border-radius: 16px;
-    padding: 18px 20px;
-    margin-bottom: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    opacity: 0;
-    transition: opacity 0.7s ease, transform 0.7s ease;
-  }
-  .blog-card.from-left { transform: translateX(-60px); }
-  .blog-card.from-right { transform: translateX(60px); }
-  .blog-card.visible {
-    opacity: 1;
-    transform: translateX(0);
-  }
-  .blog-icon {
-    font-size: 26px;
-    margin-bottom: 8px;
-    display: block;
-  }
-  .blog-title {
-    font-size: 15px;
-    font-weight: 700;
-    color: #2c3e50;
-    margin-bottom: 6px;
-  }
-  .blog-text {
-    font-size: 13px;
-    color: #666;
-    line-height: 1.5;
-  }
-</style>
-</head>
-<body>
-
-<div class="card">
-  <h1>BMI Calculator</h1>
-  <p class="subtitle">Check your Body Mass Index instantly</p>
-
-  <label for="height">Height (cm)</label>
-  <input type="number" id="height" placeholder="e.g. 170">
-
-  <label for="weight">Weight (kg)</label>
-  <input type="number" id="weight" placeholder="e.g. 65">
-
-  <button onclick="calculateBMI()">Calculate BMI</button>
-
-  <div id="resultBox">
-    <div class="bmi-number" id="bmiNumber"></div>
-    <div class="bmi-category" id="bmiCategory"></div>
-    <div class="bar-track">
-      <div class="bar-pointer" id="barPointer"></div>
-    </div>
-    <div class="ideal-weight" id="idealWeight"></div>
-  </div>
-</div>
-
-<div class="exercise-section" id="exerciseSection">
-  <div class="exercise-heading" id="exerciseHeading"></div>
-  <div class="exercise-subheading" id="exerciseSubheading"></div>
-  <div id="exerciseMenu"></div>
-</div>
-
-<div class="blog-section" id="blogSection">
-  <div class="blog-heading">Tips For You</div>
-  <div id="blogList"></div>
-</div>
-
-<script>
-function calculateBMI() {
-  const heightCm = parseFloat(document.getElementById("height").value);
-  const weight = parseFloat(document.getElementById("weight").value);
-  const resultBox = document.getElementById("resultBox");
-  const exerciseSection = document.getElementById("exerciseSection");
-  const blogSection = document.getElementById("blogSection");
-
-  if (!heightCm || !weight || heightCm <= 0 || weight <= 0) {
-    alert("Please enter valid height and weight.");
-    return;
-  }
-
-  const heightM = heightCm / 100;
-  const bmi = weight / (heightM * heightM);
-  let category = "";
-  let color = "";
-
-  if (bmi < 18.5) { category = "Underweight"; color = "#3498db"; }
-  else if (bmi < 25) { category = "Normal weight"; color = "#2ecc71"; }
-  else if (bmi < 30) { category = "Overweight"; color = "#f1c40f"; }
-  else { category = "Obese"; color = "#e74c3c"; }
-
-  document.getElementById("bmiNumber").innerText = bmi.toFixed(1);
-  document.getElementById("bmiCategory").innerText = category;
-  document.getElementById("bmiCategory").style.color = color;
-
-  let percent = ((bmi - 10) / (40 - 10)) * 100;
-  percent = Math.max(0, Math.min(100, percent));
-  document.getElementById("barPointer").style.left = percent + "%";
-
-  const minWeight = (18.5 * heightM * heightM).toFixed(1);
-  const maxWeight = (24.9 * heightM * heightM).toFixed(1);
-  document.getElementById("idealWeight").innerHTML =
-    "Ideal weight range for your height: <strong>" + minWeight + " - " + maxWeight + " kg</strong>";
-
-  resultBox.style.display = "block";
-
-  showExerciseMenu(category);
-  showBlogTips(category);
-  exerciseSection.style.display = "block";
-  blogSection.style.display = "block";
-
-  setupScrollAnimations();
-}
-
-function showExerciseMenu(category) {
-  const heading = document.getElementById("exerciseHeading");
-  const subheading = document.getElementById("exerciseSubheading");
-  const menu = document.getElementById("exerciseMenu");
-  let items = [];
-
-  if (category === "Underweight") {
-    heading.innerText = "Your Muscle-Building Menu";
-    subheading.innerText = "Focus on strength and calorie-dense nutrition";
-    items = [
-      { icon: "🏋️", anim: "anim-lift", name: "Weight Lifting", desc: "3-4 sets, 8-12 reps. Builds lean muscle mass.", tag: "3x weekly" },
-      { icon: "🧎", anim: "anim-squat", name: "Push-ups & Squats", desc: "Bodyweight strength to build a solid base.", tag: "Daily" },
-      { icon: "🍳", anim: "anim-stretch", name: "Protein-Rich Meals", desc: "Eggs, lentils, chicken, dairy to support growth.", tag: "Every meal" },
-      { icon: "🧘", anim: "anim-stretch", name: "Stretching", desc: "Improves flexibility and recovery between sets.", tag: "10 min/day" }
-    ];
-  } else if (category === "Normal weight") {
-    heading.innerText = "Your Maintenance Menu";
-    subheading.innerText = "Stay consistent to keep your healthy balance";
-    items = [
-      { icon: "🏃", anim: "anim-run", name: "Light Jogging", desc: "Keeps cardiovascular health strong and steady.", tag: "20-30 min" },
-      { icon: "🚴", anim: "anim-spin", name: "Cycling", desc: "Low-impact way to maintain fitness levels.", tag: "3x weekly" },
-      { icon: "🤸", anim: "anim-jump", name: "Jumping Jacks", desc: "Quick full-body activation, great warm-up.", tag: "5 min" },
-      { icon: "🧘", anim: "anim-stretch", name: "Yoga", desc: "Balances strength, flexibility, and stress relief.", tag: "2x weekly" }
-    ];
-  } else if (category === "Overweight") {
-    heading.innerText = "Your Fat-Burning Menu";
-    subheading.innerText = "Cardio and strength to trim down steadily";
-    items = [
-      { icon: "🏃", anim: "anim-run", name: "Brisk Walk / Jog", desc: "Burns calories consistently, easy on joints.", tag: "30 min/day" },
-      { icon: "🤸", anim: "anim-jump", name: "Jumping Jacks", desc: "High-energy cardio burst to boost heart rate.", tag: "3 sets" },
-      { icon: "🧎", anim: "anim-squat", name: "Bodyweight Squats", desc: "Builds leg strength while burning fat.", tag: "3x15 reps" },
-      { icon: "🚴", anim: "anim-spin", name: "Cycling", desc: "Effective, low-impact calorie burner.", tag: "3x weekly" }
-    ];
-  } else {
-    heading.innerText = "Your Gentle Start Menu";
-    subheading.innerText = "Build consistency first, intensity later";
-    items = [
-      { icon: "🚶", anim: "anim-run", name: "Daily Walking", desc: "Low-impact, safest way to start moving more.", tag: "20 min/day" },
-      { icon: "🏊", anim: "anim-stretch", name: "Swimming", desc: "Full-body workout with zero joint stress.", tag: "2x weekly" },
-      { icon: "🧘", anim: "anim-stretch", name: "Gentle Yoga", desc: "Improves mobility and reduces stress safely.", tag: "10-15 min" },
-      { icon: "🧎", anim: "anim-squat", name: "Chair Squats", desc: "Builds strength gradually and safely.", tag: "2x10 reps" }
-    ];
-  }
-
-  menu.innerHTML = "";
-  items.forEach(item => {
-    menu.innerHTML += `
-      <div class="menu-card">
-        <div class="menu-icon-wrap"><span class="${item.anim}">${item.icon}</span></div>
-        <div class="menu-info">
-          <div class="menu-name">${item.name}</div>
-          <div class="menu-desc">${item.desc}</div>
-          <span class="menu-tag">${item.tag}</span>
-        </div>
-      </div>
-    `;
-  });
-}
-
-function showBlogTips(category) {
-  const blogList = document.getElementById("blogList");
-  let tips = [];
-
-  if (category === "Underweight") {
-    tips = [
-      { icon: "🍽️", title: "Eat More Frequently", text: "Add 5-6 smaller meals a day instead of 3 large ones to increase calorie intake comfortably.", side: "from-left" },
-      { icon: "🥜", title: "Healthy Calorie-Dense Foods", text: "Nuts, avocados, and whole milk help gain weight without relying on junk food.", side: "from-right" },
-      { icon: "😴", title: "Rest Supports Growth", text: "Muscle is built during sleep, not just during workouts — aim for 7-9 hours nightly.", side: "from-left" }
-    ];
-  } else if (category === "Normal weight") {
-    tips = [
-      { icon: "💧", title: "Stay Hydrated Daily", text: "Drinking enough water boosts metabolism and helps maintain your healthy weight.", side: "from-left" },
-      { icon: "🥗", title: "Keep Nutrition Balanced", text: "Continue prioritizing whole foods, lean protein, and fiber to sustain your results.", side: "from-right" },
-      { icon: "🧠", title: "Manage Stress Levels", text: "Chronic stress raises cortisol, which can quietly disrupt a healthy balance.", side: "from-left" }
-    ];
-  } else if (category === "Overweight") {
-    tips = [
-      { icon: "🥗", title: "Control Portion Sizes", text: "Smaller, mindful portions reduce daily calorie intake without extreme dieting.", side: "from-left" },
-      { icon: "🚶", title: "Move Throughout the Day", text: "Short walks and taking stairs add up and improve metabolism over time.", side: "from-right" },
-      { icon: "😴", title: "Prioritize Quality Sleep", text: "Poor sleep disrupts hunger hormones, making weight loss harder to sustain.", side: "from-left" }
-    ];
-  } else {
-    tips = [
-      { icon: "🩺", title: "Consult a Professional", text: "A doctor or dietitian can help build a safe, personalized weight-loss plan.", side: "from-left" },
-      { icon: "🥗", title: "Focus on Whole Foods", text: "Reduce processed foods and sugar gradually rather than all at once.", side: "from-right" },
-      { icon: "🚶", title: "Start Small, Stay Consistent", text: "Even 10-minute walks daily build momentum toward bigger lifestyle changes.", side: "from-left" }
-    ];
-  }
-
-  blogList.innerHTML = "";
-  tips.forEach(tip => {
-    blogList.innerHTML += `
-      <div class="blog-card ${tip.side}">
-        <span class="blog-icon">${tip.icon}</span>
-        <div class="blog-title">${tip.title}</div>
-        <div class="blog-text">${tip.text}</div>
-      </div>
-    `;
-  });
-}
-
-function setupScrollAnimations() {
-  const cards = document.querySelectorAll('.blog-card, .menu-card');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-      }
-    });
-  }, { threshold: 0.15 });
-
-  cards.forEach(card => observer.observe(card));
-}
-</script>
-
-</body>
-</html>
+    to { opacity: 1; transform:
